@@ -1,0 +1,15 @@
+flowchart TB
+  APP["App Flutter"]
+  API["API (SSE)"]
+  BUSCA["Busca híbrida"]
+  VEC["pgvector"]
+  LEX["BM25"]
+  RRF["Fusão RRF"]
+  GEM["Gemini"]
+  VAL["Validador"]
+  APP -->|"HTTP POST"| API
+  API --> BUSCA
+  BUSCA --> VEC & LEX
+  VEC & LEX --> RRF
+  RRF --> GEM --> VAL
+  VAL ==>|"SSE"| APP

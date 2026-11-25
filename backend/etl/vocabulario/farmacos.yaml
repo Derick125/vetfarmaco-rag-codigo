@@ -1,0 +1,425 @@
+# Dicionário controlado de fármacos e espécies (docs/RAG_SPEC.md §2,
+# docs/PLANO_DE_FASES.md — Fase 1).
+#
+# `etl/chunk.py` casa o texto de cada chunk contra os sinônimos aqui
+# listados; o valor gravado em `chunk.farmacos`/`chunk.especies`
+# (docs/DATABASE.md §2) é sempre o `nome` canônico, nunca um sinônimo.
+#
+# Cobertura: os fármacos dos seis cenários do Quadro 2 do TCC (paracetamol,
+# ivermectina, fenobarbital, carprofeno, tramadol, insulina NPH, meloxicam)
+# mais os principais AINEs, opioides, antibióticos e antiparasitários de
+# uso corrente em clínica de pequenos animais (cães e gatos). Não é
+# exaustivo — é o vocabulário controlado inicial; cresce conforme o corpus
+# indexado exigir (TCC §4.1b).
+
+farmacos:
+  # --- Anti-inflamatórios não esteroidais (AINEs) --------------------------
+  - nome: ácido acetilsalicílico
+    classe: aine
+    sinonimos:
+      - ácido acetilsalicílico
+      - aas
+      - aspirina
+
+  - nome: meloxicam
+    classe: aine
+    sinonimos:
+      - meloxicam
+
+  - nome: carprofeno
+    classe: aine
+    sinonimos:
+      - carprofeno
+
+  - nome: cetoprofeno
+    classe: aine
+    sinonimos:
+      - cetoprofeno
+
+  - nome: dipirona
+    classe: aine
+    sinonimos:
+      - dipirona
+      - metamizol
+
+  - nome: firocoxibe
+    classe: aine
+    sinonimos:
+      - firocoxibe
+
+  - nome: flunixino meglumina
+    classe: aine
+    sinonimos:
+      - flunixino meglumina
+      - flunixino
+
+  - nome: paracetamol
+    classe: aine
+    sinonimos:
+      - paracetamol
+      - acetaminofeno
+
+  - nome: piroxicam
+    classe: aine
+    sinonimos:
+      - piroxicam
+
+  - nome: robenacoxibe
+    classe: aine
+    sinonimos:
+      - robenacoxibe
+
+  - nome: deracoxibe
+    classe: aine
+    sinonimos:
+      - deracoxibe
+
+  - nome: mavacoxibe
+    classe: aine
+    sinonimos:
+      - mavacoxibe
+
+  - nome: cimicoxibe
+    classe: aine
+    sinonimos:
+      - cimicoxibe
+
+  - nome: etoricoxibe
+    classe: aine
+    sinonimos:
+      - etoricoxibe
+
+  - nome: tepoxalina
+    classe: aine
+    sinonimos:
+      - tepoxalina
+
+  - nome: vedaprofeno
+    classe: aine
+    sinonimos:
+      - vedaprofeno
+
+  - nome: naproxeno
+    classe: aine
+    sinonimos:
+      - naproxeno
+
+  # --- Opioides --------------------------------------------------------
+  - nome: tramadol
+    classe: opioide
+    sinonimos:
+      - tramadol
+
+  - nome: morfina
+    classe: opioide
+    sinonimos:
+      - morfina
+
+  - nome: metadona
+    classe: opioide
+    sinonimos:
+      - metadona
+
+  - nome: fentanila
+    classe: opioide
+    sinonimos:
+      - fentanila
+      - fentanil
+
+  - nome: buprenorfina
+    classe: opioide
+    sinonimos:
+      - buprenorfina
+
+  - nome: butorfanol
+    classe: opioide
+    sinonimos:
+      - butorfanol
+
+  - nome: codeína
+    classe: opioide
+    sinonimos:
+      - codeína
+
+  # --- Antibióticos ------------------------------------------------------
+  - nome: amoxicilina
+    classe: antibiotico
+    sinonimos:
+      - amoxicilina
+
+  - nome: amoxicilina + ácido clavulânico
+    classe: antibiotico
+    sinonimos:
+      - amoxicilina + ácido clavulânico
+      - amoxicilina-clavulanato
+      - amoxicilina clavulanato
+
+  - nome: cefalexina
+    classe: antibiotico
+    sinonimos:
+      - cefalexina
+
+  - nome: cefovecina
+    classe: antibiotico
+    sinonimos:
+      - cefovecina
+
+  - nome: enrofloxacina
+    classe: antibiotico
+    sinonimos:
+      - enrofloxacina
+
+  - nome: marbofloxacina
+    classe: antibiotico
+    sinonimos:
+      - marbofloxacina
+
+  - nome: doxiciclina
+    classe: antibiotico
+    sinonimos:
+      - doxiciclina
+
+  - nome: metronidazol
+    classe: antibiotico
+    sinonimos:
+      - metronidazol
+
+  - nome: clindamicina
+    classe: antibiotico
+    sinonimos:
+      - clindamicina
+
+  - nome: azitromicina
+    classe: antibiotico
+    sinonimos:
+      - azitromicina
+
+  - nome: sulfametoxazol + trimetoprima
+    classe: antibiotico
+    sinonimos:
+      - sulfametoxazol + trimetoprima
+      - sulfametoxazol-trimetoprima
+      - trimetoprima + sulfametoxazol
+      - sulfametoxazol trimetoprima
+
+  - nome: ampicilina
+    classe: antibiotico
+    sinonimos:
+      - ampicilina
+
+  - nome: gentamicina
+    classe: antibiotico
+    sinonimos:
+      - gentamicina
+
+  # --- Antiparasitários ----------------------------------------------------
+  - nome: ivermectina
+    classe: antiparasitario
+    sinonimos:
+      - ivermectina
+
+  - nome: milbemicina oxima
+    classe: antiparasitario
+    sinonimos:
+      - milbemicina oxima
+      - milbemicina
+
+  - nome: moxidectina
+    classe: antiparasitario
+    sinonimos:
+      - moxidectina
+
+  - nome: selamectina
+    classe: antiparasitario
+    sinonimos:
+      - selamectina
+
+  - nome: doramectina
+    classe: antiparasitario
+    sinonimos:
+      - doramectina
+
+  - nome: fipronil
+    classe: antiparasitario
+    sinonimos:
+      - fipronil
+
+  - nome: praziquantel
+    classe: antiparasitario
+    sinonimos:
+      - praziquantel
+
+  - nome: fenbendazol
+    classe: antiparasitario
+    sinonimos:
+      - fenbendazol
+      - febendazol
+
+  - nome: pirantel
+    classe: antiparasitario
+    sinonimos:
+      - pirantel
+      - pamoato de pirantel
+
+  - nome: imidaclopride
+    classe: antiparasitario
+    sinonimos:
+      - imidaclopride
+      - imidacloprida
+
+  - nome: afoxolaner
+    classe: antiparasitario
+    sinonimos:
+      - afoxolaner
+
+  - nome: fluralaner
+    classe: antiparasitario
+    sinonimos:
+      - fluralaner
+
+  - nome: sarolaner
+    classe: antiparasitario
+    sinonimos:
+      - sarolaner
+
+  # --- Outros (cenários do Quadro 2 não cobertos acima) -------------------
+  - nome: fenobarbital
+    classe: anticonvulsivante
+    sinonimos:
+      - fenobarbital
+
+  - nome: insulina NPH
+    classe: hipoglicemiante
+    sinonimos:
+      - insulina nph
+      - insulina isófana
+
+  # --- Corticoides (glicocorticoides) -------------------------------------
+  - nome: prednisolona
+    classe: corticoide
+    sinonimos:
+      - prednisolona
+
+  - nome: prednisona
+    classe: corticoide
+    sinonimos:
+      - prednisona
+
+  - nome: dexametasona
+    classe: corticoide
+    sinonimos:
+      - dexametasona
+
+  - nome: metilprednisolona
+    classe: corticoide
+    sinonimos:
+      - metilprednisolona
+
+  - nome: hidrocortisona
+    classe: corticoide
+    sinonimos:
+      - hidrocortisona
+
+  - nome: betametasona
+    classe: corticoide
+    sinonimos:
+      - betametasona
+
+  - nome: triancinolona
+    classe: corticoide
+    sinonimos:
+      - triancinolona
+
+  # --- Cardiovasculares / diuréticos --------------------------------------
+  - nome: furosemida
+    classe: diuretico
+    sinonimos:
+      - furosemida
+
+  - nome: digoxina
+    classe: cardiotonico
+    sinonimos:
+      - digoxina
+
+especies:
+  - nome: canino
+    sinonimos:
+      - canino
+      - canina
+      - caninos
+      - caninas
+      - cão
+      - cães
+      - cachorro
+      - cachorros
+      - cachorra
+      - cachorras
+
+  - nome: felino
+    sinonimos:
+      - felino
+      - felina
+      - felinos
+      - felinas
+      - gato
+      - gatos
+      - gata
+      - gatas
+
+  # --- Fora do escopo do TCC (pequenos animais) — declaradas para permitir
+  # que `etl/extract_bula.py` reconheça (e exclua) ciclos de produto
+  # veterinário de outras espécies em bulas multiespécie (ex.: RCM de UE
+  # que descreve a mesma substância em várias apresentações, cada uma para
+  # uma espécie-alvo diferente). Nunca usadas para indicar cobertura no
+  # manifesto de bulas.
+  - nome: bovino
+    sinonimos:
+      - bovino
+      - bovina
+      - bovinos
+      - bovinas
+      - boi
+      - bois
+      - vaca
+      - vacas
+      - gado
+
+  - nome: suino
+    sinonimos:
+      - suíno
+      - suína
+      - suínos
+      - suínas
+      - porco
+      - porcos
+      - porca
+      - porcas
+
+  - nome: equino
+    sinonimos:
+      - equino
+      - equina
+      - equinos
+      - equinas
+      - cavalo
+      - cavalos
+      - égua
+      - éguas
+
+  - nome: caprino
+    sinonimos:
+      - caprino
+      - caprina
+      - caprinos
+      - caprinas
+      - cabra
+      - cabras
+      - bode
+      - bodes
+
+  - nome: coelho
+    sinonimos:
+      - coelho
+      - coelhos
+      - coelha
+      - coelhas

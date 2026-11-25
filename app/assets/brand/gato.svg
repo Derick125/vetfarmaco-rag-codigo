@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" fill="none" stroke="#5A6663" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+  <title>Gato — traço</title>
+  <!-- cabeça e orelhas -->
+  <path d="M64 104 C64 70 88 54 120 54 C152 54 176 70 176 104 C176 134 152 152 120 152 C88 152 64 134 64 104 Z"/>
+  <path d="M70 80 L64 30 L104 58"/>
+  <path d="M170 80 L176 30 L136 58"/>
+  <!-- olhos fechados, focinho, bigodes -->
+  <path d="M96 106 q9 -9 18 0"/>
+  <path d="M126 106 q9 -9 18 0"/>
+  <path d="M114 122 h12 l-6 8 z"/>
+  <path d="M120 130 v6 M120 136 q-8 8 -16 2 M120 136 q8 8 16 2"/>
+  <path d="M60 122 h-34 M62 133 l-32 10 M180 122 h34 M178 133 l32 10"/>
+  <!-- ombros -->
+  <path d="M56 188 C60 166 86 156 120 156 C154 156 180 166 184 188"/>
+</svg>

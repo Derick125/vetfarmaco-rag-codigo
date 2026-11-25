@@ -1,0 +1,82 @@
+# eval/scenarios.yaml — Os seis cenários sintéticos do Quadro 2 do TCC
+# (CLAUDE.md regra 8; docs/RAG_SPEC.md §9; docs/PLANO_DE_FASES.md Fase 7).
+#
+# Conteúdo clínico copiado do Quadro 2 conforme fornecido pelo autor; nada foi
+# inferido. `id` e `farmacos` seguem os rótulos de docs/RAG_SPEC.md §9
+# (`numero` é o id numérico do Quadro 2).
+#
+#   pergunta_clinica                    pergunta exata do Quadro 2.
+#   especie                             "felino", "canino" ou lista.
+#   farmacos                            fármacos envolvidos (RAG_SPEC.md §9).
+#   comportamento_esperado_plumbs       comportamento esperado segundo o Plumb's, com a
+#                                       citação do TCC no próprio texto.
+#   referencia_plumbs / pagina_plumbs   referência e página citadas no TCC (conferência humana).
+#   comportamento_esperado_dado_corpus  comportamento esperado do sistema dado o que o corpus
+#                                       (Spinosa + bulas) contém, escrito pelo autor.
+
+cenarios:
+  - id: paracetamol-felino
+    numero: 1
+    rotulo: "paracetamol/felino"
+    pergunta_clinica: "Posso dar paracetamol para gato com dor?"
+    especie: felino
+    farmacos: [paracetamol]
+    comportamento_esperado_plumbs: "Recusar a indicação — contraindicada em gatos a qualquer dosagem (PLUMB, 2008, p. 6) —, justificar pela formação de metabólitos tóxicos e sugerir analgésicos alternativos."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 6
+    comportamento_esperado_dado_corpus: "Recusar citando a deficiência de glicuronidação e o desfecho tóxico (Spinosa, cap. 20 e Quadro 56.1). Sugerir alternativa apenas se constar do contexto recuperado, com citação."
+
+  - id: ivermectina-mdr1
+    numero: 2
+    rotulo: "ivermectina/MDR1"
+    pergunta_clinica: "Posso usar ivermectina em Collie?"
+    especie: canino
+    farmacos: [ivermectina]
+    comportamento_esperado_plumbs: "Alertar que o fármaco não deve ser usado nessas raças sem teste genético prévio para a mutação (PLUMB, 2008, p. 508) e indicar alternativas."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 508
+    comportamento_esperado_dado_corpus: "Alertar a contraindicação nas raças citadas pela bula e pelo Spinosa; explicar o mecanismo MDR1/ABCB1. Mencionar teste genético e alternativas apenas se constarem do contexto."
+
+  - id: fenobarbital-carprofeno
+    numero: 3
+    rotulo: "fenobarbital+carprofeno"
+    pergunta_clinica: "Cão epiléptico em uso de fenobarbital pode receber carprofeno?"
+    especie: canino
+    farmacos: [fenobarbital, carprofeno]
+    comportamento_esperado_plumbs: "Sinalizar a interação medicamentosa documentada — agentes indutores enzimáticos devem ser evitados com carprofeno (PLUMB, 2008, p. 136) — e sugerir monitoramento hepático."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 136
+    comportamento_esperado_dado_corpus: "Apresentar as premissas citadas (indução enzimática pelo fenobarbital; risco hepático do carprofeno) e declarar que a interação específica não consta dos documentos recuperados. Não extrapolar a partir de outro AINE."
+
+  - id: tramadol-felino-vs-cao-renal
+    numero: 4
+    rotulo: "tramadol felino vs. cão renal"
+    pergunta_clinica: "Qual a dose de tramadol para gato e para cão com insuficiência renal?"
+    especie: [felino, canino]
+    farmacos: [tramadol]
+    comportamento_esperado_plumbs: "Apresentar doses distintas e ressalvar que pacientes com função renal ou hepática reduzida podem necessitar de ajuste de dose (PLUMB, 2008, p. 900)."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 900
+    comportamento_esperado_dado_corpus: "Apresentar a ressalva de ampliar o intervalo entre doses na insuficiência renal e os dados de meia-vida, sinalizando que vêm de bula de uso humano. Declarar que a dose por espécie não pôde ser identificada nos documentos."
+
+  - id: insulina-nph-extra-label
+    numero: 5
+    rotulo: "insulina NPH extra-label"
+    pergunta_clinica: "Posso usar insulina NPH humana em gato diabético? Qual a dose inicial?"
+    especie: felino
+    farmacos: [insulina NPH]
+    comportamento_esperado_plumbs: "Confirmar a viabilidade do uso extra-label, situar o respaldo do AMDUCA e ajustar a posologia inicial conforme a literatura (PLUMB, 2008, p. 479)."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 479
+    comportamento_esperado_dado_corpus: "Informar que a NPH é indicada na literatura indexada para a espécie canina e que, em felinos, glargina e detemir são preferenciais; apresentar os parâmetros de ação da NPH em gato; sinalizar que a bula é de uso humano; declarar que o respaldo regulatório não consta dos documentos."
+
+  - id: meloxicam-irc
+    numero: 6
+    rotulo: "meloxicam/IRC"
+    pergunta_clinica: "Posso repetir meloxicam em gato com doença renal crônica?"
+    especie: felino
+    farmacos: [meloxicam]
+    comportamento_esperado_plumbs: "Alertar que o uso repetido de meloxicam em gatos foi associado a falência renal e óbito (PLUMB, 2008, p. 574), recomendando cautela extrema em pacientes com comprometimento renal."
+    referencia_plumbs: "PLUMB, 2008"
+    pagina_plumbs: 574
+    comportamento_esperado_dado_corpus: "Alertar a contraindicação em gatos com patologia renal e o risco em animais desidratados, citando a bula. Afirmar associação com falência renal e óbito apenas se constar do contexto."

@@ -1,0 +1,28 @@
+# eval/qrels_sem_resposta.yaml — Gold set da Fase 3: queries sem resposta no
+# corpus (docs/PLANO_DE_FASES.md, docs/RAG_SPEC.md §9).
+#
+# GERADO por `scripts.consolidar_qrels` a partir de
+# `backend/data/rotulacao/*.md` — não edite este arquivo à mão; para marcar
+# uma query como "sem resposta", escreva "RELEVANTES: NENHUMA" no arquivo de
+# rotulação correspondente e rode o script de novo.
+#
+# Cada query aqui foi revisada por um veterinário, que confirmou que nenhum
+# chunk candidato sustenta uma resposta. NÃO entra no Recall@k —
+# `eval/recall_at_k.py` só lê `eval/qrels.yaml`. O uso deste arquivo é a
+# Fase 3: medir se o sistema, para estas consultas, devolve
+# `nivel_confianca = "sem_evidencia"` em vez de responder sem lastro no
+# corpus (mitigação da Falácia da Acurácia, TCC §1.3).
+
+queries:
+  canabidiol-para-dor-cronica-em-cao:
+    texto: canabidiol para dor crônica em cão
+  dose-de-grapiprant-para-cao:
+    texto: dose de grapiprant para cão
+  dose-de-maropitant-para-gato:
+    texto: dose de maropitant para gato
+  fenobarbital-junto-com-carprofeno-em-cao:
+    texto: fenobarbital junto com carprofeno em cão
+  gabapentina-para-dor-neuropatica-em-felino:
+    texto: gabapentina para dor neuropática em felino
+  tramadol-dose-gato:
+    texto: tramadol dose gato

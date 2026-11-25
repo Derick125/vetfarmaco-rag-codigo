@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" fill="none" stroke="#A2B0AA" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+  <title>Cão — traço</title>
+  <!-- cabeça: elipse; as orelhas saem por fora do contorno e terminam nele, sem entrar -->
+  <ellipse cx="120" cy="100" rx="40" ry="46"/>
+  <path d="M88.3 72 C60 66 42 96 48 130 C52 146 74 146 88.3 128"/>
+  <path d="M151.7 72 C180 66 198 96 192 130 C188 146 166 146 151.7 128"/>
+  <!-- olhos fechados e sorridentes (mesma família do gato), focinho -->
+  <path d="M98 90 q7 -8 14 0"/>
+  <path d="M128 90 q7 -8 14 0"/>
+  <ellipse cx="120" cy="120" rx="21" ry="15"/>
+  <ellipse cx="120" cy="112" rx="8" ry="5.5" fill="#A2B0AA"/>
+  <path d="M120 117 v8 M120 125 q-8 6 -15 0 M120 125 q8 6 15 0"/>
+  <!-- ombros -->
+  <path d="M60 188 C64 168 88 158 120 158 C152 158 176 168 180 188"/>
+</svg>

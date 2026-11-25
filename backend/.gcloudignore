@@ -1,0 +1,40 @@
+# .gcloudignore próprio: sem ele o gcloud usaria o .gitignore e deixaria o
+# data/bm25_index/ de fora do upload.
+
+# --- Segredos e ambientes locais ---
+.env
+.env.*
+!.env.example
+.venv/
+.venv*/
+.coverage
+coverage/
+
+# --- Testes e caches ---
+tests/
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.pyc
+
+# --- Dados que o serviço NÃO usa em runtime ---
+data/extracted/
+data/audit/
+data/preview/
+data/rotulacao/
+data/*.pdf
+zz_*
+
+# --- Ferramentas de avaliação/migração fora do runtime ---
+eval/
+migrations/
+scripts/
+
+# --- Git ---
+.git/
+.gitignore
+
+# --- O índice BM25 PRECISA ir no upload (reincluído explicitamente) ---
+!data/bm25_index/
+!data/bm25_index/**
+!data/mapa_capitulos.json

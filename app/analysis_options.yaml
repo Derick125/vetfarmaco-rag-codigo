@@ -1,0 +1,12 @@
+# Lint estrito da Very Good Ventures — escolha de stack fixada em CLAUDE.md §3.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - web/**

@@ -1,0 +1,157 @@
+# eval/qrels.yaml — Gold set para Recall@k (docs/RAG_SPEC.md §9).
+#
+# GERADO por `scripts.consolidar_qrels` a partir de
+# `backend/data/rotulacao/*.md` — não edite este arquivo à mão; edite a
+# linha "RELEVANTES:" no arquivo de rotulação correspondente e rode o
+# script de novo.
+#
+# Só as queries com "RELEVANTES:" preenchida por chunk_id entram aqui. Uma
+# query rotulada como "sem resposta no corpus" ("RELEVANTES: NENHUMA") vai
+# para eval/qrels_sem_resposta.yaml, não para este arquivo.
+#
+# Consumido por `eval/recall_at_k.py`.
+
+queries:
+  acido-acetilsalicilico-pode-em-gato:
+    texto: ácido acetilsalicílico pode em gato
+    chunk_ids_relevantes:
+    - spinosa-c20-p419-003
+    - spinosa-c20-p419-004
+    - spinosa-c20-p421-001
+  aine-em-cao-desidratado:
+    texto: AINE em cão desidratado
+    chunk_ids_relevantes:
+    - meloxicam-advertencias-001
+    - meloxicam-advertencias-005
+    - meloxicam-advertencias-008
+    - spinosa-c20-p426-003
+    - carprofeno-contraindicacoes-001
+  carprofeno-e-digoxina:
+    texto: carprofeno e digoxina
+    chunk_ids_relevantes:
+    - carprofeno-interacoes-001
+  carprofeno-em-cadela-prenhe:
+    texto: carprofeno em cadela prenhe
+    chunk_ids_relevantes:
+    - carprofeno-contraindicacoes-001
+  carprofeno-pode-dar-pra-gato:
+    texto: carprofeno pode dar pra gato
+    chunk_ids_relevantes:
+    - carprofeno-contraindicacoes-001
+    - spinosa-c20-p426-001
+    - spinosa-c20-p426-002
+  cetoprofeno-felino-posologia:
+    texto: cetoprofeno felino posologia
+    chunk_ids_relevantes:
+    - spinosa-c20-p421-001
+  dose-de-acepromazina-para-sedacao-em-gato:
+    texto: dose de acepromazina para sedação em gato
+    chunk_ids_relevantes:
+    - spinosa-c14-p286-004
+  dose-de-dipirona-para-cao:
+    texto: dose de dipirona para cão
+    chunk_ids_relevantes:
+    - spinosa-c20-p422-001
+  dose-de-insulina-nph-para-gato-diabetico:
+    texto: dose de insulina NPH para gato diabético
+    chunk_ids_relevantes:
+    - spinosa-c30-p626-002
+    - spinosa-c30-p626-003
+  dose-de-insulina-regular-em-cetoacidose-diabetica-felina:
+    texto: dose de insulina regular em cetoacidose diabética felina
+    chunk_ids_relevantes:
+    - spinosa-c30-p628-001
+    - spinosa-c30-p628-002
+  fenobarbital-em-cao-com-problema-no-figado:
+    texto: fenobarbital em cão com problema no fígado
+    chunk_ids_relevantes:
+    - spinosa-c13-p271-002
+    - spinosa-c13-p271-003
+    - spinosa-c13-p272-001
+    - spinosa-c13-p278-002
+    - spinosa-c13-p280-001
+  fenobarbital-reduz-efeito-de-outros-remedios:
+    texto: fenobarbital reduz efeito de outros remédios
+    chunk_ids_relevantes:
+    - fenobarbital-interacoes-001
+    - fenobarbital-interacoes-004
+    - fenobarbital-interacoes-005
+    - spinosa-c10-p230-002
+    - spinosa-c13-p274-001
+    - spinosa-c13-p274-002
+    - spinosa-c13-p278-002
+    - spinosa-c13-p280-001
+    - spinosa-c29-p608-003
+    - spinosa-c3-p76-002
+    - spinosa-c39-p771-001
+    - spinosa-c63-p1330-001
+  ivermectina-em-collie:
+    texto: ivermectina em collie
+    chunk_ids_relevantes:
+    - ivermectina-contraindicacoes-001
+    - spinosa-c44-p875-003
+    - spinosa-c44-p876-001
+    - spinosa-c53-p1102-002
+    - spinosa-c53-p1102-003
+  meloxicam-junto-com-furosemida:
+    texto: meloxicam junto com furosemida
+    chunk_ids_relevantes:
+    - meloxicam-interacoes-001
+    - meloxicam-interacoes-003
+    - meloxicam-interacoes-004
+  paracetamol-pode-em-gato:
+    texto: paracetamol pode em gato?
+    chunk_ids_relevantes:
+    - spinosa-c20-p432-001
+    - spinosa-c20-p432-002
+    - spinosa-c20-p422-002
+    - spinosa-c56-p1172-001
+  posologia-de-fenobarbital-em-cao-epileptico:
+    texto: posologia de fenobarbital em cão epiléptico
+    chunk_ids_relevantes:
+    - spinosa-c13-p271-003
+  posso-dar-aine-com-corticoide:
+    texto: posso dar AINE com corticoide
+    chunk_ids_relevantes:
+    - carprofeno-interacoes-001
+    - meloxicam-interacoes-001
+    - meloxicam-interacoes-003
+    - meloxicam-interacoes-004
+    - spinosa-c20-p417-003
+  posso-usar-dipirona-em-gato:
+    texto: posso usar dipirona em gato
+    chunk_ids_relevantes:
+    - spinosa-c20-p422-001
+  qual-a-dose-de-carprofeno-em-cao-de-20-kg:
+    texto: qual a dose de carprofeno em cão de 20 kg
+    chunk_ids_relevantes:
+    - carprofeno-posologia-001
+    - carprofeno-posologia-002
+    - spinosa-c20-p421-001
+  qual-a-dose-de-meloxicam-para-gato:
+    texto: qual a dose de meloxicam para gato
+    chunk_ids_relevantes:
+    - meloxicam-posologia-004
+    - meloxicam-posologia-005
+    - spinosa-c20-p422-002
+  quanto-de-ivermectina-para-sarna-sarcoptica:
+    texto: quanto de ivermectina para sarna sarcóptica
+    chunk_ids_relevantes:
+    - ivermectina-posologia-003
+  tramadol-com-antidepressivo:
+    texto: tramadol com antidepressivo
+    chunk_ids_relevantes:
+    - tramadol-contraindicacoes-001
+    - tramadol-interacoes-001
+  tramadol-em-gato-com-problema-nos-rins:
+    texto: tramadol em gato com problema nos rins
+    chunk_ids_relevantes:
+    - tramadol-farmacologia-003
+    - tramadol-posologia-002
+  tramadol-em-paciente-com-epilepsia:
+    texto: tramadol em paciente com epilepsia
+    chunk_ids_relevantes:
+    - tramadol-advertencias-001
+    - tramadol-contraindicacoes-001
+    - tramadol-interacoes-001
+    - tramadol-reacoes_adversas-002

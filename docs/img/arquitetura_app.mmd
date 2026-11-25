@@ -1,0 +1,12 @@
+flowchart TB
+  PRES["Presentation (BLoC)"]
+  DOM["Domain"]
+  SAN["Filtro de PII"]
+  DATA["Data (Repository)"]
+  HIVE[("Cache hive_ce")]
+  API["API FastAPI"]
+  PRES --> DOM --> SAN --> DATA
+  DATA <--> HIVE
+  DATA -->|"HTTP POST"| API
+  API ==>|"SSE"| DATA
+  DATA -.->|"Stream"| PRES

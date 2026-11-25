@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>VetFarmaco — só a cápsula, para 32 dp ou menos</title>
+  <defs>
+    <clipPath id="metadeEsq"><rect x="112" y="352" width="400" height="320"/></clipPath>
+    <clipPath id="metadeDir"><rect x="512" y="352" width="400" height="320"/></clipPath>
+  </defs>
+  <rect width="1024" height="1024" fill="#17506B"/>
+  <g transform="rotate(-45 512 512)">
+    <rect x="112" y="352" width="800" height="320" rx="160" fill="#F4F6F4" clip-path="url(#metadeEsq)"/>
+    <rect x="112" y="352" width="800" height="320" rx="160" fill="#86C7A2" clip-path="url(#metadeDir)"/>
+    <rect x="504" y="352" width="16" height="320" fill="#17506B"/>
+  </g>
+</svg>

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  backend:
+    name: Back-end — lint e testes
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Instalar dependências
+        run: uv sync
+
+      - name: ruff check
+        run: uv run ruff check .
+
+      - name: ruff format --check
+        run: uv run ruff format --check .
+
+      - name: pytest
+        run: uv run pytest -q
+
+  flutter:
+    name: App — analyze e testes (cobertura domain/data ≥70%)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.3"
+          channel: stable
+          cache: true
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: Gerar código (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: flutter analyze
+        run: flutter analyze
+
+      - name: flutter test --coverage
+        run: flutter test --coverage
+
+      - name: Cobertura de domain/ e data/ ≥ 70%
+        run: bash tool/check_domain_data_coverage.sh coverage/lcov.info 70
+
+  regra-de-dependencia:
+    name: Regra de Dependência (ARCHITECTURE.md §2)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: domain/ não pode importar framework
+        run: |
+          ! grep -rEn "import 'package:(flutter|dio|hive_ce|supabase)" app/lib/features/*/domain/

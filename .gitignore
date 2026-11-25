@@ -1,0 +1,25 @@
+.env
+.env.*
+!.env.example
+data/*.pdf
+backend/data/bm25_index/
+backend/data/extracted/
+**/build/
+**/.dart_tool/
+__pycache__/
+.venv/
+coverage/
+.venv-eval/
+.coverage
+# Temporários de prévia (testes e imagens de captura) nunca vão ao repositório
+zz_*
+
+# Respostas do painel clínico (exportações do formulário) são dados de pesquisa: ficam fora do Git
+backend/data/audit/painel/*.csv
+backend/data/audit/painel/respostas*
+
+# Telemetria da campanha (CSVs exportados do app) e respostas do painel fora de audit/painel: dados de pesquisa, fora do Git
+backend/data/telemetria/
+backend/data/painel/
+**/respostas_painel*
+**/*(respostas)*.csv

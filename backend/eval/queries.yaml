@@ -1,0 +1,46 @@
+# eval/queries.yaml — perguntas para montar o gold set manualmente.
+#
+# Só o texto da pergunta, como o médico veterinário digitaria — sem
+# chunk_id, sem julgamento de relevância. Quem decide relevância é você,
+# não este arquivo nem o pipeline.
+#
+# Fluxo:
+#   1. uv run python -m scripts.preparar_rotulacao
+#      → gera um arquivo por query em backend/data/rotulacao/<slug>.md, com
+#        os candidatos reunidos (busca semântica + BM25 + lexical direta).
+#   2. Leia cada arquivo, chunk a chunk, e preencha a linha "RELEVANTES:"
+#      no topo com os chunk_id que sustentam a resposta.
+#   3. uv run python -m scripts.consolidar_qrels
+#      → gera eval/qrels.yaml a partir do que foi preenchido.
+
+queries:
+  - qual a dose de meloxicam para gato
+  - paracetamol pode em gato?
+  - ivermectina em collie
+  - carprofeno pode dar pra gato
+  - dose de insulina NPH para gato diabético
+  - dose de dipirona para cão
+  - tramadol dose gato
+  - qual a dose de carprofeno em cão de 20 kg
+  - posologia de fenobarbital em cão epiléptico
+  - quanto de ivermectina para sarna sarcóptica
+  - dose de acepromazina para sedação em gato
+  - cetoprofeno felino posologia
+  - dose de insulina regular em cetoacidose diabética felina
+  - ácido acetilsalicílico pode em gato
+  - posso usar dipirona em gato
+  - AINE em cão desidratado
+  - carprofeno em cadela prenhe
+  - fenobarbital em cão com problema no fígado
+  - tramadol em paciente com epilepsia
+  - meloxicam junto com furosemida
+  - posso dar AINE com corticoide
+  - tramadol com antidepressivo
+  - fenobarbital reduz efeito de outros remédios
+  - carprofeno e digoxina
+  - tramadol em gato com problema nos rins
+  - fenobarbital junto com carprofeno em cão
+  - dose de maropitant para gato
+  - gabapentina para dor neuropática em felino
+  - dose de grapiprant para cão
+  - canabidiol para dor crônica em cão

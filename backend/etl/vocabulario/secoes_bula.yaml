@@ -1,0 +1,276 @@
+# Vocabulário controlado de cabeçalhos de seção de bula (docs/RAG_SPEC.md,
+# extensão para `etl/extract_bula.py` e `etl/chunk_bula.py`).
+#
+# Reconhece quatro formatos de cabeçalho (ver `_dividir_bloco_em_segmentos`
+# em `etl/extract_bula.py`):
+#   - numerado (RDC 60/12), ex.: "1. INDICAÇÕES", "8. POSOLOGIA E MODO DE USAR";
+#   - não numerado em caixa alta (bulas veterinárias/antigas), ex.: "INDICAÇÕES",
+#     "FORMA DE APLICAÇÃO E DOSAGEM";
+#   - frase seguida de dois-pontos, no mesmo caso do texto corrido (bulas
+#     antigas), ex.: "Fórmula:", "Posologia e modo de usar:";
+#   - numerado em DUAS linhas, com sub-numeração decimal (modelos RCM/SPC da
+#     UE, ex. bulas veterinárias em formato INFARMED/EMA) — o número
+#     ("4.9", "6.4.") sozinho numa linha, o título (qualquer capitalização)
+#     na linha seguinte, ex.: "4.9\nPosologia e via de administração".
+# `etl/extract_bula.py` já removeu numeração/dois-pontos antes de casar
+# contra os padrões abaixo — os padrões valem para os quatro formatos. Os
+# documentos em português europeu (Portugal/UE) usam a ortografia
+# pré-Acordo Ortográfico de 1990, que insere um "c" mudo antes de alguns
+# "ç" (ex. "reacções", "interacções") — os padrões que casam esse tipo de
+# palavra usam "c?ç" em vez de só "ç" para cobrir as duas grafias.
+#
+# Cada padrão é uma regex (re.IGNORECASE) casada por busca (não por
+# correspondência exata) contra o texto do cabeçalho. `secoes` é avaliada
+# em ORDEM — "contraindicacoes" vem antes de "indicacoes" porque
+# "CONTRAINDICAÇÕES" contém "INDICAÇÕES" como substring
+# ("CONTRA" + "INDICAÇÕES"). `descartar` é avaliada antes de tudo: um
+# cabeçalho que bate em `descartar` nunca vira chunk, mesmo que também
+# bateria em algum item de `secoes`.
+#
+# Um cabeçalho reconhecido (i.e., passa em `_detectar_cabecalho`) que não
+# bate em nenhum padrão de `descartar` nem de `secoes` cai no valor fixo
+# "outros" nos formatos numerado/caixa alta — mantido (não descartado), e
+# registrado em log como `secao_nao_mapeada` para revisão manual: pode ser
+# um cabeçalho legítimo
+# que falta adicionar aqui.
+
+secoes:
+  - secao: contraindicacoes
+    padroes:
+      - "CONTRA[- ]?INDICA[CÇ][OÕ]ES"
+      - "QUANDO N[AÃ]O DEVO USAR"
+
+  - secao: indicacoes
+    padroes:
+      - "INDICAC?[CÇ][OÕ]ES"
+      - "ESP[EÉ]CIE\\(?S\\)?[- ]ALVO" # RCM/SPC da UE: "Espécie(s)-alvo"
+      - "PARA QUE (ESTE MEDICAMENTO )?[EÉ] INDICADO"
+
+  - secao: posologia
+    padroes:
+      - "POSOLOGIA"
+      - "MODO DE USAR"
+      - "FORMA DE APLICA[CÇ][AÃ]O"
+      - "(?<!SOBRE)(?<!SUPER)DOSAGEM" # exclui "Sobredosagem"/"Superdosagem", que são advertência, não posologia
+      - "COMO (DEVO )?USAR"
+      - "VIA(S)? DE ADMINISTRA[CÇ][AÃ]O"
+
+  - secao: interacoes
+    padroes:
+      - "INTERAC?[CÇ][OÕ]ES"
+      - "INCOMPATIBILIDADE"
+      # Hierarquia de níveis de interação de bulas antigas (bulário
+      # humano): 3 níveis numerados por dígito ("1) ASSOCIAÇÕES
+      # DESACONSELHADAS", já cobertos pelo numerado genérico), e dentro do
+      # nível 2 (associações que requerem precauções), 3 subgrupos por
+      # letra (a, b, c) — reconhecidos por `_titulo_letra_mesma_linha` em
+      # `etl/extract_bula.py`, casados aqui pelo início do próprio título
+      # (o texto depois da letra vira o cabeçalho).
+      - "^ASSOCIA[CÇ][OÕ]ES DESACONSELHADAS"
+      - "^ASSOCIA[CÇ][OÕ]ES QUE REQUEREM PRECAU[CÇ][OÕ]ES"
+      - "^ASSOCIA[CÇ][OÕ]ES ONDE SE DEVE TER ATEN[CÇ][AÃ]O"
+      - "^MEDICAMENTOS QUE PROVOCAM AUMENTO"
+      - "^MEDICAMENTOS QUE PROVOCAM DIMINUI[CÇ][AÃ]O"
+      - "^MEDICAMENTOS CUJOS N[IÍ]VEIS"
+
+  - secao: reacoes_adversas
+    padroes:
+      - "REAC?[CÇ][OÕ]ES ADVERSAS"
+      - "EFEITOS COLATERAIS"
+      - "MALES QUE POSSO SENTIR"
+
+  - secao: composicao
+    padroes:
+      - "COMPOSI[CÇ][AÃ]O"
+      - "^F[OÓ]RMULA$"
+      - "^NOME DO MEDICAMENTO" # RCM/SPC da UE: "1. Nome do medicamento veterinário"
+      - "LISTA DE EXCIPIENTES"
+      - "^FORMA FARMAC[EÊ]UTICA$"
+
+  - secao: farmacologia
+    padroes:
+      - "FARMACOL[OÓ]G" # cobre "farmacologia" (sem acento nessa posição) e o adjetivo "farmacológic-" (com acento)
+      - "PROPRIEDADES FARMACOL[OÓ]GICAS"
+      - "A[CÇ][AÃ]O FARMACOL[OÓ]GICA"
+      - "MECANISMO DE A[CÇ][AÃ]O"
+      - "^DESCRI[CÇ][AÃ]O$"
+      - "FARMACODIN[AÂ]MICA" # RCM/SPC da UE: "5.1 Propriedades farmacodinâmicas"
+      - "FARMACOCIN[EÉ]TICA" # RCM/SPC da UE: "5.2 Propriedades farmacocinéticas"
+
+  - secao: armazenamento
+    padroes:
+      - "ARMAZEN" # cobre ARMAZENAMENTO e ARMAZENAGEM
+      - "CONSERVA[CÇ][AÃ]O"
+
+  - secao: advertencias
+    padroes:
+      - "ADVERT[EÊ]NCIA"
+      - "PRECAU[CÇ][OÕ]ES"
+      - "SUPERDOS" # bulas brasileiras: "Superdosagem"
+      - "SOBREDOS" # RCM/SPC da UE (português europeu): "Sobredosagem"
+      - "GESTA[CÇ][AÃ]O" # RCM/SPC da UE: "Utilização durante a gestação, a lactação..."
+      - "O QUE DEVO SABER ANTES DE USAR"
+
+  # Marcadores estruturais de bulas humanas bipartidas (bloco leigo +
+  # bloco técnico) — a classificação "outros" pouco importa aqui: o que
+  # interessa é que casem no vocabulário (não em `descartar`), para poder
+  # ser reconhecidos em QUALQUER posição de bloco (não só na primeira
+  # linha — ver `_dividir_bloco_em_segmentos`), já que "INFORMAÇÕES
+  # TÉCNICAS" tipicamente aparece "enterrada" no meio de um bloco maior.
+  # `_descartar_bloco_paciente`, em `etl/extract_bula.py`, usa a posição
+  # desses dois cabeçalhos para descartar o bloco leigo inteiro.
+  - secao: outros
+    padroes:
+      - "^INFORMA[CÇ][OÕ]ES AO PACIENTE"
+      - "^INFORMA[CÇ][OÕ]ES T[EÉ]CNICAS"
+
+# Seções sem valor clínico (docs desta tarefa): dizeres legais, responsável
+# técnico, fabricante, CNPJ, apresentações comerciais, prazo de validade,
+# histórico de alteração de bula, SAC, instruções de abertura de ampola e
+# resumos de ensaios clínicos.
+descartar:
+  - "DIZERES LEGAIS"
+  - "DIZERES DE R[OÓ]TULO"
+  - "IND[UÚ]STRIA BRASILEIR" # também reconhecida como cabeçalho (não só varrida linha a linha)
+  - "MARCA REGISTRADA"
+  - "RESPONS[AÁ]VEL T[EÉ]CNIC"
+  - "FABRICANTE"
+  - "FABRICADO POR"
+  - "PROPRIET[AÁ]RIO"
+  - "EMBALADO POR"
+  - "^APRESENTA[CÇ]" # cobre singular (APRESENTAÇÃO) e plural (APRESENTAÇÕES)
+  - "PRAZO DE VALIDADE"
+  - "^VALIDADE$"
+  - "HIST[OÓ]RICO DE ALTERA[CÇ][AÃ]O"
+  - "SERVI[CÇ]O DE ATENDIMENTO AO CONSUMIDOR"
+  - "^SAC$"
+  - "FALE CONOSCO"
+  - "ABERTURA D[AE] AMPOLA"
+  - "ENSAIO(S)? CL[IÍ]NICO"
+  - "ESTUDO(S)? CL[IÍ]NICO"
+  - "RESULTADOS DE EFIC[AÁ]CIA"
+  - "IDENTIFICA[CÇ][AÃ]O DO (MEDICAMENTO|PRODUTO)"
+  - "N[UÚ]MERO DE LOTE"
+  - "VENDA SOB PRESCRI[CÇ][AÃ]O"
+  - "LICENCIADO NO MINIST[EÉ]RIO"
+  - "REGISTRADO NO MINIST[EÉ]RIO"
+  - "ACONDICIONAMENTO" # embalagem/recipiente comercial (RCM/SPC da UE)
+  - "TITULAR DA AUTORIZA[CÇ][AÃ]O"
+  - "N[UÚ]MERO(\\(S\\)|S)? DE REGIST[OA]" # registo/registro da autorização de comercialização
+  - "AUTORIZA[CÇ][AÃ]O DE INTRODU[CÇ][AÃ]O NO MERCADO" # cobre "número(s) da/de registo da..." em qualquer fraseado
+  - "DATA DA (PRIMEIRA )?AUTORIZA[CÇ][AÃ]O"
+  - "DATA DA REVIS[AÃ]O DO TEXTO"
+  - "LIMITES M[AÁ]XIMOS DE RES[IÍ]DUOS" # LMR — só relevante para animal de produção
+  - "PROIBI[CÇ][AÃ]O DE VENDA"
+
+# Varredura de linha DENTRO das seções já aceitas (`_remover_linhas_administrativas`
+# em `etl/extract_bula.py`) — para o caso, comum, de uma frase legal/administrativa
+# isolada aparecer sem cabeçalho próprio (ex.: a linha de registro do produto no
+# Ministério da Agricultura, com número e data, solta dentro da seção de
+# Armazenagem). `descartar`, acima, joga a SEÇÃO inteira fora pelo cabeçalho;
+# isto aqui joga fora só a LINHA, e só quando ela sobra sem cabeçalho que a
+# classifique. Roda sobre o texto cru do bloco, uma linha (`\n`) por vez, ANTES
+# da limpeza que funde linhas em parágrafo — nunca sobre uma frase clínica já
+# fundida, por isso o risco de apagar parte de uma frase clínica é baixo: os
+# padrões abaixo (número de CNPJ, CEP, telefone, sigla de conselho profissional)
+# não ocorrem por acaso no meio de uma frase sobre indicação/posologia/
+# contraindicação.
+linhas_administrativas:
+  - "LICENCIAD[OA] (NO|EM) MINIST[EÉ]RIO"
+  - "REGISTRAD[OA] (NO|EM) MINIST[EÉ]RIO"
+  - "REGISTRO\\s+(MS|ANVISA)"
+  - "\\bMS\\s*[-–]\\s*\\d" # registro MS no formato "MS - 1.xxxx.xxxx"
+  - "\\bMS\\s*N[ºO°]" # registro MS no formato "MS Nº 123456"
+  - "\\bCNPJ\\b"
+  - "\\d{2}\\.\\d{3}\\.\\d{3}[\\/.]\\d{3,4}-\\d{2}" # número de CNPJ
+  - "\\bCRF-?[A-Z]{2}\\b" # conselho regional de farmácia
+  - "\\bCRMV-?[A-Z]{2}\\b" # conselho regional de medicina veterinária
+  - "\\d{5}-\\d{3}\\b" # CEP
+  - "^(Rua|Av\\.|Avenida|Alameda|Rodovia|Rod\\.)\\s" # início de linha de endereço
+  - "\\bSAC\\b"
+  - "FALE CONOSCO"
+  - "ATENDIMENTO AO (CONSUMIDOR|CLIENTE)"
+  - "[\\w.+-]+@[\\w-]+\\.[\\w.-]+" # e-mail
+  - "\\bwww\\.[\\w.-]+\\b"
+  - "\\b0800[\\s-]?\\d" # 0800 / discagem gratuita
+  - "WHATSAPP"
+  - "WHATSAC" # erro de digitação visto numa bula real
+  - "\\(\\d{2,3}\\)\\s*\\d?\\s*\\d{4}-?\\d{4}" # telefone com DDD
+  - "IND[UÚ]STRIA BRASILEIR"
+  - "INDUSTRIA BRASILE" # variante em espanhol (defesa extra; o bloco em espanhol já é descartado inteiro)
+  - "MARCA REGISTRADA"
+  - "RESPONS[AÁ]VEL T[EÉ]CNIC"
+  - "VENDA SOB PRESCRI[CÇ][AÃ]O"
+  # Instruções ilustradas de uso de dispositivo de dosagem (conta-gotas,
+  # seringa dosadora...) embutidas sem cabeçalho próprio dentro da seção
+  # de posologia — texto redundante com a legenda da figura, sem valor
+  # clínico à parte da própria dose.
+  - "ROMPER O LACRE"
+  - "TAMPA PARA O LADO DE CIMA" # frase de abertura da instrução, sem palavra-gatilho própria (ex. "lacre") na mesma linha
+  - "CONTA-GOTAS"
+  - "GOTEJAMENTO"
+  - "MODO DE USAR\\s*\\(GOTAS\\)"
+
+# Parágrafo inteiro removido a partir da linha em que o padrão bate, até a
+# próxima linha em branco (ver `_remover_paragrafos_administrativos` em
+# `etl/extract_bula.py`) — para conteúdo espalhado por várias linhas
+# embutido dentro de uma seção que, no resto, é clinicamente aplicável.
+# Cobre o desenho de estudo de comparabilidade (medicamento biossimilar)
+# dentro de "Propriedades farmacodinâmicas"/"farmacocinéticas" — o perfil
+# de ação e a farmacocinética de absorção em si (início, pico, duração,
+# Cmax, meia-vida) NÃO batem neste padrão e ficam. Também cobre legenda de
+# figura ("Figura 2: Perfis médios...") — como PARÁGRAFO, não só linha,
+# porque uma legenda longa pode quebrar em mais de uma linha do PDF antes
+# da linha em branco (`^FIGURA\s*\d` sozinho só pegaria a primeira linha,
+# deixando um fragmento solto da continuação).
+paragrafos_administrativos:
+  - "GRAMPO EUGLIC[EÊ]MICO"
+  - "^FIGURA\\s*\\d"
+  - "DADOS DE SEGURAN[CÇ]A PR[EÉ]-CL[IÍ]NIC" # estudos toxicológicos em animais (roedores etc.) — sem valor clínico direto
+  # NÃO duplicar aqui as frases de `tabelas_descartadas`: essa legenda é a
+  # mesma que `_procurar_legenda` usa para casar a TABELA contra
+  # `tabelas_descartadas` — removê-la do texto corrido antes da tabela ser
+  # processada apaga o sinal que o descarte da tabela depende, e a tabela
+  # (agora sem legenda reconhecível) deixa de ser descartada. A legenda
+  # órfã que sobra no texto depois que só a tabela é descartada é um custo
+  # aceito, não um bug.
+
+# Bloco inteiro removido a partir da linha em que o padrão bate, até a
+# próxima linha que PARECE um cabeçalho de seção de verdade
+# (`_parece_inicio_de_cabecalho` em `etl/extract_bula.py`) — atravessa
+# linhas em branco internas, diferente de `paragrafos_administrativos`
+# (que para na primeira). Precisa rodar ANTES da segmentação em
+# cabeçalhos, não depois — ver docstring de `_remover_blocos_administrativos`.
+# Hoje só cobre instruções ilustradas de abertura de ampola/dispositivo,
+# com mais de um sistema e passos numerados "N.\nTexto do passo" (cada
+# passo isolado já seria, por si só, um cabeçalho numerado de sinal
+# forte).
+#
+# O gatilho tem que ser a FRASE-TÍTULO que abre o bloco de instrução
+# ("Orientações para abertura da ampola:"), nunca só a combinação solta
+# "abertura da ampola" — essa combinação também aparece em frases de
+# advertência avulsas e sem relação com o passo a passo ilustrado (ex. uma
+# advertência sobre o descarte do que sobrar depois de aberta a ampola), cada uma delas um parágrafo comum dentro de
+# ARMAZENAMENTO/POSOLOGIA. Como a remoção atravessa linhas em branco e
+# pode até atravessar blocos (ver `em_andamento` na função), um gatilho
+# solto nessas frases avulsas — sobretudo a última coisa antes do fim de
+# um bloco/página — varre tudo até o próximo cabeçalho de verdade, que
+# pode ficar páginas à frente (foi o que aconteceu na bula do tramadol:
+# apagou a ressalva de posologia para insuficiência renal/hepática).
+blocos_administrativos:
+  - "ORIENTA[CÇ][OÕ]ES PARA ABERTURA DA AMPOLA"
+
+# Tabela descartada por inteiro (nunca truncada — ver `TabelaExtraida` em
+# `etl/extract_bula.py`) quando sua legenda bate num destes padrões.
+# Casado contra a LEGENDA (a frase introdutória mais próxima da tabela,
+# tipicamente a própria legenda "Tabela N: ..."), não contra o conteúdo da
+# tabela. DELIBERADAMENTE não usa "Tabela 1"/"Tabela 2" (a numeração é
+# arbitrária por documento — a "Tabela 1" de uma bula pode ser a tabela de
+# posologia de outra) — casa pela DESCRIÇÃO na legenda: hoje cobre tabelas
+# de estudo farmacocinético populacional (por faixa etária/sexo) sem valor
+# clínico direto à parte do texto corrido que já resume os achados — uma
+# tabela de posologia/diluição não bate aqui e continua indivisível como
+# sempre.
+tabelas_descartadas:
+  - "ESTUDOS CL[IÍ]NICOS REALIZADOS NO DESENVOLVIMENTO"
+  - "CLEARANCE E MEIA-VIDA"

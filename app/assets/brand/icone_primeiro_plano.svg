@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>VetFarmaco — primeiro plano do ícone adaptativo</title>
+  <defs>
+    <clipPath id="metadeEsq"><rect x="212" y="377" width="300" height="270"/></clipPath>
+    <clipPath id="metadeDir"><rect x="512" y="377" width="300" height="270"/></clipPath>
+  </defs>
+  <!-- fundo: metileno -->
+  <!-- cápsula inclinada: metade esquerda papel, metade direita verde-evidência claro -->
+  <g transform="rotate(-45 512 512)">
+    <rect x="212" y="377" width="600" height="270" rx="135" fill="#F4F6F4" clip-path="url(#metadeEsq)"/>
+    <rect x="212" y="377" width="600" height="270" rx="135" fill="#86C7A2" clip-path="url(#metadeDir)"/>
+    <rect x="508" y="377" width="8" height="270" fill="#17506B"/>
+  </g>
+  <!-- marca de pata (em pé), sobre a metade clara -->
+  <g fill="#17506B">
+    <ellipse cx="406" cy="650" rx="54" ry="42"/>
+    <ellipse cx="344" cy="598" rx="20" ry="27" transform="rotate(-25 344 598)"/>
+    <ellipse cx="385" cy="566" rx="20" ry="28" transform="rotate(-8 385 566)"/>
+    <ellipse cx="437" cy="566" rx="20" ry="28" transform="rotate(8 437 566)"/>
+    <ellipse cx="478" cy="598" rx="20" ry="27" transform="rotate(25 478 598)"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+flowchart TB
+  subgraph APP["App Flutter"]
+    PRES["Presentation (BLoC)"]
+    DOM["Domain"]
+    SAN["Filtro de PII"]
+    DATA["Data (Repository)"]
+    HIVE[("Cache hive_ce")]
+    PRES --> DOM --> SAN --> DATA
+    DATA <--> HIVE
+  end
+  subgraph BE["Back-end FastAPI"]
+    API["API (SSE)"]
+    BUSCA["Busca híbrida"]
+    VEC["pgvector"]
+    LEX["BM25"]
+    RRF["Fusão RRF"]
+    GEM["Gemini"]
+    VAL["Validador"]
+    API --> BUSCA
+    BUSCA --> VEC & LEX
+    VEC & LEX --> RRF
+    RRF --> GEM --> VAL
+  end
+  DATA -->|"HTTP POST"| API
+  VAL ==>|"SSE"| DATA
+  DATA -.->|"Stream"| PRES
