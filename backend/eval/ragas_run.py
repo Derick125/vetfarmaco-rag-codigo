@@ -9,7 +9,7 @@ Dependências (ragas, anthropic) vivem em `.venv-eval`, fora do `pyproject.toml`
 
     .venv-eval/Scripts/python -m eval.ragas_run              # só estima o custo (sem chamadas)
     .venv-eval/Scripts/python -m eval.ragas_run --executar   # roda os juízes e grava os resultados
-    .venv-eval/Scripts/python -m eval.ragas_run --painel     # só regera o formulário, com os 6 cenários (sem chamadas)
+    .venv-eval/Scripts/python -m eval.ragas_run --painel     # só regera o formulário (sem chamadas)
 
 Saídas: `data/audit/ragas/resultado.json`, `resultado.md` e
 `data/audit/painel/conteudo_formulario.md`.
@@ -312,12 +312,14 @@ def escrever_resultado_md(res: dict, preco_gemini: tuple[float, float]) -> Path:
     linhas = [
         f"# RAGAS — {res['rodada']}",
         "",
-        f"Executado em {res['executado_em']}. Respostas validadas já gravadas; nenhuma resposta nova.",
+        f"Executado em {res['executado_em']}. "
+        "Respostas validadas já gravadas; nenhuma resposta nova.",
         f"Contexto = trechos enviados ao modelo na rodada. Limiares: Faithfulness ≥ "
         f"{_n(lim['faithfulness'])}, ContextRelevance ≥ {_n(lim['context_relevance'])} "
         "(aprovação pelo juiz principal, Claude).",
         "",
-        "| cenário | F Claude | F Gemini | Δ F | CR Claude | CR Gemini | Δ CR | F ≥ 0,80 | CR ≥ 0,75 | aprovado |",
+        "| cenário | F Claude | F Gemini | Δ F | CR Claude | CR Gemini | Δ CR "
+        "| F ≥ 0,80 | CR ≥ 0,75 | aprovado |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     sim = {True: "sim", False: "não"}
@@ -330,7 +332,10 @@ def escrever_resultado_md(res: dict, preco_gemini: tuple[float, float]) -> Path:
             f"| {sim[a['faithfulness']]} | {sim[a['context_relevance']]} | **{sim[a['ambos']]}** |"
         )
     linhas += ["", "Δ = Claude − Gemini.", "", "## Juízes e custo real", ""]
-    linhas += ["| juiz | modelo | chamadas | tokens in | tokens out | custo USD |", "|---|---|---|---|---|---|"]
+    linhas += [
+        "| juiz | modelo | chamadas | tokens in | tokens out | custo USD |",
+        "|---|---|---|---|---|---|",
+    ]
     for nome, j in res["juizes"].items():
         p = CLAUDE_PRECO if nome == "claude" else preco_gemini
         usd = j["tokens_entrada"] * p[0] / 1e6 + j["tokens_saida"] * p[1] / 1e6
@@ -357,7 +362,12 @@ def escrever_formulario(cenarios: list[Cenario]) -> Path:
         v = c.dados["resposta_validada"]
         alerta = (v.get("alerta_seguranca") or {}).get("texto", "").strip()
         linhas += [f"## Situação {n}", "", f"**Pergunta:** {c.pergunta}", ""]
-        linhas += ["**Resposta do sistema:**", "", " ".join(p["texto"].strip() for p in v["paragrafos"]), ""]
+        linhas += [
+            "**Resposta do sistema:**",
+            "",
+            " ".join(p["texto"].strip() for p in v["paragrafos"]),
+            "",
+        ]
         linhas += ["**Alerta de segurança:**", "", alerta or "(sem alerta)", ""]
         linhas += ["**Trechos citados:**", ""]
         for i, ct in enumerate(v["citacoes"], 1):
@@ -420,7 +430,7 @@ def consolidar_variabilidade() -> Path:
         for cid in ids:
             linha = [f"`{cid}`"]
             consolidado["juizes"][juiz][cid] = {}
-            for chave, sigla in _METRICAS:
+            for chave, _sigla in _METRICAS:
                 vals = [r["cenarios"][cid][juiz][chave] for _, r in execucoes]
                 media, dp = _media_dp(vals)
                 consolidado["juizes"][juiz][cid][chave] = {

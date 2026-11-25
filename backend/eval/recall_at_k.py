@@ -37,6 +37,11 @@ from google import genai
 from google.genai import errors
 from pgvector.psycopg import register_vector
 from ranx import Qrels, Run, evaluate
+from scripts.consolidar_qrels import (
+    CAMINHO_ROTULACAO_PADRAO,
+    ArquivoDeRotulacaoInvalido,
+    classificar_rotulacao,
+)
 
 from app.config import get_settings
 from app.rag.fusao import K_PADRAO, fundir
@@ -44,11 +49,6 @@ from app.rag.retriever_lexical import buscar as buscar_lexical
 from app.rag.retriever_lexical import carregar_indice
 from app.rag.retriever_vetorial import buscar as buscar_vetorial
 from etl.embed import gerar_embeddings
-from scripts.consolidar_qrels import (
-    CAMINHO_ROTULACAO_PADRAO,
-    ArquivoDeRotulacaoInvalido,
-    classificar_rotulacao,
-)
 
 logger = structlog.get_logger()
 

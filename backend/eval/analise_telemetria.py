@@ -711,8 +711,8 @@ def atribuir_por_ordem_e_tokens(
     sessões de 6 consultas. Em cada sessão, atribui-se cada consulta a um cenário diferente
     (um por consulta), de modo que some o menor possível da distância entre os tokens da
     consulta e a referência do cenário; empate: menos trocas em relação à posição. Com mais
-    de 6 consultas, fica de fora a que torna a soma menor (empate: a mais antiga). Com menos de 6, os
-    cenários sem consulta ficam vazios. Devolve as referências e as sessões em que o
+    de 6 consultas, fica de fora a que torna a soma menor (empate: a mais antiga). Com menos
+    de 6, os cenários sem consulta ficam vazios. Devolve as referências e as sessões em que o
     resultado difere da ordem simples (posição k = cenário k + 1).
     """
     sessoes = montar_sessoes(linhas, lacuna_min)
